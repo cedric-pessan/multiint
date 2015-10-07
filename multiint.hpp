@@ -26,23 +26,26 @@ SOFTWARE.
 #define MULTIINT_HPP
 
 #include <string>
-#include <iostream>
-#include <cstdlib>
 #include <stdint.h>
 #include <algorithm>
-#include <map>
-
-using std::ifstream;
-using std::string;
-using std::cout;
-using std::endl;
-using std::reverse;
-using std::map;
 
 typedef unsigned __int128 uint128_t;
 
-template< int L > class LargeInteger
+template< int R > class IntegerWidthShouldBeMultipleOf64;
+
+template<> class IntegerWidthShouldBeMultipleOf64< 0 >
 {
+};
+
+template< int W > class LargeInteger : private IntegerWidthShouldBeMultipleOf64< W & 0x3F >
+{
+ private:
+#ifdef __SIZEOF_INT128__
+   static const int L = W / 64;
+#else
+   static const int L = W / 32;
+#endif
+   
  public:
    LargeInteger( int64_t i )
      {
@@ -199,27 +202,27 @@ template< int L > class LargeInteger
         return *this;
      }
    
-   operator string() const
+   operator std::string() const
      {
         if( isNegative() )
           {
              const_cast<LargeInteger*>(this)->negate();
-             string s = "-";
-             s += (string)(*this);
+             std::string s = "-";
+             s += (std::string)(*this);
              const_cast<LargeInteger*>(this)->negate();
              return s;
           }
         
         if( !isPositive() ) return "0";
         
-        string s;
+        std::string s;
         LargeInteger tmp = *this;
         while( tmp.isPositive() )
           {
              tmp /= 10;
              s += ( '0' + tmp.r );
           }
-        reverse( s.begin(), s.end() );
+        std::reverse( s.begin(), s.end() );
         return s;
      }
    
@@ -246,13 +249,6 @@ template< int L > class LargeInteger
              ++num[ k ];
              if( num[ k ] != 0 ) break;
           }
-     }
-   
-   void dump() const
-     {
-        cout << std::hex;
-        for( int i = 0; i < L; ++i ) cout << num[ i ] << ' ';
-        cout << std::dec << endl;
      }
 };
 
