@@ -29,34 +29,74 @@ SOFTWARE.
 #include <stdint.h>
 #include <algorithm>
 
-typedef unsigned __int128 uint128_t;
+#ifdef __SIZEOF_INT128__
+#define USE_NATIVE_INT128
+#endif
 
+#ifdef USE_NATIVE_INT128
+typedef unsigned __int128 uint128_t;
+#else
+typedef Basic128 uint128_t;
+#endif
+
+/* This will generate an error at compilation time if the user try to
+ * define a LargeInteger with a length that is not a multiple of 64.
+ * This restriction is required as our integer are compound of 64 bits
+ * integers. Moreover, supporting all length would add a lot of complexity
+ * with possible performance impact. It should not be a big deal as we are
+ * supposed to handle large numbers so a few bits more of less should not make
+ * any difference :-)
+ */
 template< int R > class IntegerWidthShouldBeMultipleOf64;
 
 template<> class IntegerWidthShouldBeMultipleOf64< 0 >
 {
 };
 
-template< int W > class LargeInteger : private IntegerWidthShouldBeMultipleOf64< W & 0x3F >
+template< int W, typename u128 = uint128_t > class LargeInteger : private IntegerWidthShouldBeMultipleOf64< W & 0x3F >
 {
  private:
-#ifdef __SIZEOF_INT128__
    static const int L = W / 64;
-#else
-   static const int L = W / 32;
-#endif
    
  public:
    LargeInteger( int64_t i )
      {
-        for( int k = 0; k < L-1; ++k ) num[ k ] = 0;
-        if( i < 0 )
-          {
-             num[ L-1 ] = -i;
-             negate();
-          }
-        else
-          num[ L-1 ] = i;
+        assign( i );
+     }
+   
+   LargeInteger( uint64_t i )
+     {
+        assign( i );
+     }
+   
+   LargeInteger( int32_t i )
+     {
+        assign( (int64_t)i );
+     }
+   
+   LargeInteger( uint32_t i )
+     {
+        assign( (uint64_t)i );
+     }
+   
+   LargeInteger( int16_t i )
+     {
+        assign( (int64_t)i );
+     }
+   
+   LargeInteger( uint16_t i )
+     {
+        assign( (uint64_t)i );
+     }
+   
+   LargeInteger( int8_t i )
+     {
+        assign( (int64_t)i );
+     }
+   
+   LargeInteger( uint8_t i )
+     {
+        assign( (uint64_t)i );
      }
    
    LargeInteger()
@@ -249,6 +289,24 @@ template< int W > class LargeInteger : private IntegerWidthShouldBeMultipleOf64<
              ++num[ k ];
              if( num[ k ] != 0 ) break;
           }
+     }
+   
+   void assign( int64_t i )
+     {
+        for( int k = 0; k < L-1; ++k ) num[ k ] = 0;
+        if( i < 0 )
+          {
+             num[ L-1 ] = -i;
+             negate();
+          }
+        else
+          num[ L-1 ] = i;
+     }
+   
+   void assign( uint64_t i )
+     {
+        for( int k = 0; k < L-1; ++k ) num[ k ] = 0;
+        num[ L-1 ] = i;
      }
 };
 
