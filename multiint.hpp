@@ -116,21 +116,61 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
    
    LargeInteger( const std::string& s )
      {
-        if( s.length() == 0 ) *this = 0;
-                
-        LargeInteger tmp;
-        int i = 0;
-        if( s[ 0 ] == '-' ) ++i;
-        
-        for( ; i < s.length(); ++i )
-          {
-             if( s[ i ] < '0' || s[ i ] > '9' ) throw number_format_error( "Number could not be parsed" );
-             tmp = tmp * 10 + ( s[ i ] - '0' );
-          }
-        
-        if( s[ 0 ] == '-' ) tmp.negate();
-        
-        *this = tmp;
+        parse( s );
+     }
+   
+   LargeInteger& operator=( int64_t i )
+     {
+        assign( i );
+        return *this;
+     }
+   
+   LargeInteger& operator=( uint64_t i )
+     {
+        assign( i );
+        return *this;
+     }
+   
+   LargeInteger& operator=( int32_t i )
+     {
+        assign( (int64_t)i );
+        return *this;
+     }
+   
+   LargeInteger& operator=( uint32_t i )
+     {
+        assign( (uint64_t)i );
+        return *this;
+     }
+   
+   LargeInteger& operator=( int16_t i )
+     {
+        assign( (int64_t)i );
+        return *this;
+     }
+   
+   LargeInteger& operator=( uint16_t i )
+     {
+        assign( (uint64_t)i );
+        return *this;
+     }
+   
+   LargeInteger& operator=( int8_t i )
+     {
+        assign( (int64_t)i );
+        return *this;
+     }
+   
+   LargeInteger& operator=( uint8_t i )
+     {
+        assign( (uint64_t)i );
+        return *this;
+     }
+   
+   LargeInteger& operator=( const std::string& s )
+     {
+        parse( s );
+        return *this;
      }
    
    LargeInteger operator*( int64_t i ) const
@@ -342,6 +382,25 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         for( int k = 0; k < L-1; ++k ) num[ k ] = 0;
         num[ L-1 ] = i;
         r = 0;
+     }
+   
+   void parse( const std::string& s )
+     {
+        if( s.length() == 0 ) *this = 0;
+                
+        LargeInteger tmp;
+        int i = 0;
+        if( s[ 0 ] == '-' ) ++i;
+        
+        for( ; i < s.length(); ++i )
+          {
+             if( s[ i ] < '0' || s[ i ] > '9' ) throw number_format_error( "Number could not be parsed" );
+             tmp = tmp * 10 + ( s[ i ] - '0' );
+          }
+        
+        if( s[ 0 ] == '-' ) tmp.negate();
+        
+        *this = tmp;
      }
 };
 
