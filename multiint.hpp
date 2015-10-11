@@ -28,6 +28,7 @@ SOFTWARE.
 #include <string>
 #include <stdint.h>
 #include <algorithm>
+#include <stdexcept>
 
 #ifdef __SIZEOF_INT128__
 #define USE_NATIVE_INT128
@@ -38,6 +39,15 @@ typedef unsigned __int128 uint128_t;
 #else
 typedef Basic128 uint128_t;
 #endif
+
+class number_format_error : public std::runtime_error
+{
+ public:
+   number_format_error( const std::string& reason )
+     : std::runtime_error( reason )
+       {
+       }
+};
 
 /* This will generate an error at compilation time if the user try to
  * define a LargeInteger with a length that is not a multiple of 64.
@@ -104,6 +114,25 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         for( int k = 0; k < L; ++k ) num[ k ] = 0;
      }
    
+   LargeInteger( const std::string& s )
+     {
+        if( s.length() == 0 ) *this = 0;
+                
+        LargeInteger tmp;
+        int i = 0;
+        if( s[ 0 ] == '-' ) ++i;
+        
+        for( ; i < s.length(); ++i )
+          {
+             if( s[ i ] < '0' || s[ i ] > '9' ) throw number_format_error( "Number could not be parsed" );
+             tmp = tmp * 10 + ( s[ i ] - '0' );
+          }
+        
+        if( s[ 0 ] == '-' ) tmp.negate();
+        
+        *this = tmp;
+     }
+   
    LargeInteger operator*( int64_t i ) const
      {
         bool leftneg = isNegative();
@@ -140,6 +169,11 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
              res.num[ k ] = tmp & 0xFFFFFFFFFFFFFFFFLL;
           }
         return res;
+     }
+   
+   LargeInteger operator*( int32_t i ) const
+     {
+        return *this * (int64_t)i;
      }
    
    LargeInteger operator*( const LargeInteger& b ) const
@@ -307,6 +341,7 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
      {
         for( int k = 0; k < L-1; ++k ) num[ k ] = 0;
         num[ L-1 ] = i;
+        r = 0;
      }
 };
 
