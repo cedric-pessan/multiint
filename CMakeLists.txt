@@ -9,4 +9,4 @@ add_subdirectory(/usr/src/gtest gtest)
 
 add_executable(tests unit_tests.cpp)
 
-target_link_libraries(tests gtest gtest_main)
+target_link_libraries(tests gtest gtest_main gmp)

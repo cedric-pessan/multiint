@@ -173,6 +173,21 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return *this;
      }
    
+   LargeInteger operator+( const LargeInteger& b ) const
+     {
+        LargeInteger res( 0 );
+        uint64_t carry = 0;
+        
+        for( int k = L-1; k >= 0; --k )
+          {
+             uint128_t tmp = (uint128_t)num[ k ] + (uint128_t)b.num[ k ] + (uint128_t)carry;
+             carry = tmp >> 64;
+             res.num[ k ] = tmp & 0xFFFFFFFFFFFFFFFFLL;
+          }
+        
+        return res;
+     }
+   
    LargeInteger operator*( int64_t i ) const
      {
         bool leftneg = isNegative();
@@ -260,21 +275,6 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         res.r = r;
         if( neg ) res.negate();
         if( leftneg ) const_cast< LargeInteger* >( this )->negate();
-        return res;
-     }
-   
-   LargeInteger operator+( const LargeInteger& b ) const
-     {
-        LargeInteger res( 0 );
-        uint64_t carry = 0;
-        
-        for( int k = L-1; k >= 0; --k )
-          {
-             uint128_t tmp = (uint128_t)num[ k ] + (uint128_t)b.num[ k ] + (uint128_t)carry;
-             carry = tmp >> 64;
-             res.num[ k ] = tmp & 0xFFFFFFFFFFFFFFFFLL;
-          }
-        
         return res;
      }
    
