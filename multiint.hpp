@@ -387,6 +387,12 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
    void parse( const std::string& s )
      {
         if( s.length() == 0 ) *this = 0;
+        if( s[ 0 ] == '0' )
+          {
+             if( s.length() > 1 && tolower( s[ 1 ] ) == 'x' ) parseHex( s );
+             else parseOct( s );
+             return;
+          }
                 
         LargeInteger tmp;
         int i = 0;
@@ -399,6 +405,35 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
           }
         
         if( s[ 0 ] == '-' ) tmp.negate();
+        
+        *this = tmp;
+     }
+   
+   void parseHex( const std::string& s )
+     {
+        LargeInteger tmp;
+        for( int i = 2; i < s.length(); ++i)
+          {
+             int val = 0;
+             char c = tolower( s[ i ] );
+             if( c >= '0' && c <= '9' ) val = c - '0';
+             else if( c >= 'a' && c <= 'f' ) val = 10 + c - 'a';
+             else throw number_format_error( "Number could not be parsed" );
+             
+             tmp = tmp * 16 + val;
+          }
+        
+        *this = tmp;
+     }
+   
+   void parseOct( const std::string& s )
+     {
+        LargeInteger tmp;
+        for( int i = 1; i < s.length(); ++i )
+          {
+             if( s[ i ] < '0' || s[ i ] > '7' ) throw number_format_error( "Number could not be parsed" );
+             tmp = tmp * 8 + ( s[ i ] - '0' );
+          }
         
         *this = tmp;
      }
