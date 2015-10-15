@@ -211,7 +211,7 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         bool rightneg = ( i & ( 1LL << 63 ) ) != 0;
         bool neg = false;
         if( leftneg && !rightneg || !leftneg && rightneg ) neg = true;
-        if( leftneg ) const_cast< LargeInteger* >(this)->negate();
+        const LargeInteger& left = leftneg ? -*this : *this;
         if( rightneg ) i = -i;
         
         LargeInteger res( 0 );
@@ -219,13 +219,12 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         
         for( int k = L-1; k >= 0; --k )
           {
-             uint128_t tmp = (uint128_t)i * (uint128_t)num[k] + (uint128_t)carry;
+             uint128_t tmp = (uint128_t)i * (uint128_t)left.num[k] + (uint128_t)carry;
              carry = tmp >> 64;
              res.num[ k ] = tmp & 0xFFFFFFFFFFFFFFFFLL;
           }
         
         if( neg ) res.negate();
-        if( leftneg ) const_cast< LargeInteger* >( this )->negate();
         return res;
      }
    
@@ -248,25 +247,48 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return *this * (int64_t)i;
      }
    
+   LargeInteger operator*( uint32_t i ) const
+     {
+        return *this * (uint64_t)i;
+     }
+   
+   LargeInteger operator*( int16_t i ) const
+     {
+        return *this * (int64_t)i;
+     }
+   
+   LargeInteger operator*( uint16_t i ) const
+     {
+        return *this * (uint64_t)i;
+     }
+   
+   LargeInteger operator*( int8_t i ) const
+     {
+        return *this * (int64_t)i;
+     }
+   
+   LargeInteger operator*( uint8_t i ) const
+     {
+        return *this * (uint64_t)i;
+     }
+   
    LargeInteger operator*( const LargeInteger& b ) const
      {
         bool leftneg = isNegative();
         bool rightneg = b.isNegative();
         bool neg = false;
         if( leftneg && !rightneg || !leftneg && rightneg ) neg = true;
-        if( leftneg ) const_cast< LargeInteger* >(this)->negate();
-        if( rightneg ) const_cast< LargeInteger* >( &b )->negate();
+        const LargeInteger& left = leftneg ? -*this : *this;
+        const LargeInteger& right = rightneg ? -b : b;
         
         LargeInteger res( 0 );
         
         for( int k = 0; k < L; ++k )
           {
-             res += ( b * num[ k ] ) << ( L*8*8 - 64 * ( k+1 ) );
+             res += ( right * left.num[ k ] ) << ( L*8*8 - 64 * ( k+1 ) );
           }
         
         if( neg ) res.negate();
-        if( leftneg ) const_cast< LargeInteger* >( this )->negate();
-        if( rightneg ) const_cast< LargeInteger* >( &b )->negate();
         return res;
      }
    
