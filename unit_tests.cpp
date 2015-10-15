@@ -86,3 +86,23 @@ TEST(LargeIntegerTest, Addition)
    mpz_class i3gmp( s3 );
    ASSERT_EQ( (string)( i1 + i3 ), mpz_class( i1gmp + i3gmp ).get_str() );
 }
+
+TEST(LargeIntegerTest, Subtraction)
+{
+   string s1 = "2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   LargeInteger<1024> i1 = s1;
+   mpz_class i1gmp( s1 );
+   ASSERT_EQ( (string)( i1 - 4354657576 ), mpz_class( i1gmp - mpz_class( 4354657576 ) ).get_str() );
+   
+   ASSERT_EQ( (string)( i1 - -4354657576 ), mpz_class( i1gmp - mpz_class( -4354657576 ) ).get_str() );
+   
+   string s2 = "122435843953723954234958473942043735374349544738992998187456783424737538394220";
+   LargeInteger<1024> i2 = s2;
+   mpz_class i2gmp( s2 );
+   ASSERT_EQ( (string)( i1 - i2 ), mpz_class( i1gmp - i2gmp ).get_str() );
+   
+   string s3 = "-122435843953723954234958473942043735374349544738992998187456783424737538394220";
+   LargeInteger<1024> i3 = s3;
+   mpz_class i3gmp( s3 );
+   ASSERT_EQ( (string)( i1 - i3 ), mpz_class( i1gmp - i3gmp ).get_str() );
+}

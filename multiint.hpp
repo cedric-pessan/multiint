@@ -188,6 +188,18 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return res;
      }
    
+   LargeInteger operator-( const LargeInteger& b ) const
+     {
+        return *this + -b;
+     }
+   
+   LargeInteger operator-() const
+     {
+        LargeInteger tmp( *this );
+        tmp.negate();
+        return tmp;
+     }
+   
    LargeInteger operator*( int64_t i ) const
      {
         bool leftneg = isNegative();
