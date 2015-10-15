@@ -106,3 +106,25 @@ TEST(LargeIntegerTest, Subtraction)
    mpz_class i3gmp( s3 );
    ASSERT_EQ( (string)( i1 - i3 ), mpz_class( i1gmp - i3gmp ).get_str() );
 }
+
+TEST(LargeIntegerTest, UnaryPlus)
+{
+   string s1 = "2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   LargeInteger<1024> i1 = s1;
+   ASSERT_EQ( (string)( +i1 ), s1 );
+   
+   string s2 = "-2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   LargeInteger<1024> i2 = s2;
+   ASSERT_EQ( (string)( +i2 ), s2 );
+}
+
+TEST(LargeIntegerTest, UnaryMinus)
+{
+   string s1 = "2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   string s2 = "-2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   LargeInteger<1024> i1 = s1;
+   ASSERT_EQ( (string)( -i1 ), s2 );
+      
+   LargeInteger<1024> i2 = s2;
+   ASSERT_EQ( (string)( -i2 ), s1 );
+}

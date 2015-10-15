@@ -193,6 +193,11 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return *this + -b;
      }
    
+   const LargeInteger& operator+() const
+     {
+        return *this;
+     }
+   
    LargeInteger operator-() const
      {
         LargeInteger tmp( *this );
