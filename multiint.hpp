@@ -69,52 +69,63 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
    static const int L = W / 64;
    
  public:
-   LargeInteger( int64_t i )
+   LargeInteger( int64_t i ) : r( NULL )
      {
         assign( i );
      }
    
-   LargeInteger( uint64_t i )
+   LargeInteger( uint64_t i ) : r( NULL )
      {
         assign( i );
      }
    
-   LargeInteger( int32_t i )
+   LargeInteger( int32_t i ) : r( NULL )
      {
         assign( (int64_t)i );
      }
    
-   LargeInteger( uint32_t i )
+   LargeInteger( uint32_t i ) : r( NULL )
      {
         assign( (uint64_t)i );
      }
    
-   LargeInteger( int16_t i )
+   LargeInteger( int16_t i ) : r( NULL )
      {
         assign( (int64_t)i );
      }
    
-   LargeInteger( uint16_t i )
+   LargeInteger( uint16_t i ) : r( NULL )
      {
         assign( (uint64_t)i );
      }
    
-   LargeInteger( int8_t i )
+   LargeInteger( int8_t i ) : r( NULL )
      {
         assign( (int64_t)i );
      }
    
-   LargeInteger( uint8_t i )
+   LargeInteger( uint8_t i ) : r( NULL )
      {
         assign( (uint64_t)i );
      }
    
-   LargeInteger()
+   LargeInteger() : r( NULL )
      {
         for( int k = 0; k < L; ++k ) num[ k ] = 0;
      }
    
-   LargeInteger( const std::string& s )
+   LargeInteger( const LargeInteger& b ) : r( NULL )
+     {
+        for( int k = 0; k < L; ++k ) num[ k ] = b.num[ k ];
+        if( b.r ) r = new LargeInteger( *b.r );
+     }
+   
+   ~LargeInteger()
+     {
+        if( r ) delete r;
+     }
+   
+   LargeInteger( const std::string& s ) : r( NULL )
      {
         parse( s );
      }
@@ -164,6 +175,15 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
    LargeInteger& operator=( uint8_t i )
      {
         assign( (uint64_t)i );
+        return *this;
+     }
+   
+   LargeInteger& operator=( const LargeInteger& b )
+     {
+        if( r ) delete( r );
+        r = NULL;
+        for( int k = 0; k < L; ++k ) num[ k ] = b.num[ k ];
+        if( b.r ) r = new LargeInteger( *b.r );
         return *this;
      }
    
@@ -298,7 +318,7 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         bool rightneg = ( i & ( 1LL << 63 ) ) != 0;
         bool neg = false;
         if( leftneg && !rightneg || !leftneg && rightneg ) neg = true;
-        if( leftneg ) const_cast< LargeInteger* >(this)->negate();
+        const LargeInteger& left = leftneg ? -*this : *this;
         if( rightneg ) i = -i;
         
         LargeInteger res( 0 );
@@ -306,14 +326,43 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         
         for( int k = 0; k < L; ++k )
           {
-             r = (uint128_t)r << 64 | (uint128_t)num[k];
+             r = (uint128_t)r << 64 | (uint128_t)left.num[k];
              res.num[k] = r / i;
              r %= i;
           }
         
-        res.r = r;
+        res.r = new LargeInteger( (uint64_t)r );
         if( neg ) res.negate();
-        if( leftneg ) const_cast< LargeInteger* >( this )->negate();
+        return res;
+     }
+   
+   LargeInteger operator/( const LargeInteger& d ) const
+     {
+        bool leftneg = isNegative();
+        bool rightneg = d.isNegative();
+        bool neg = false;
+        if( leftneg && !rightneg || !leftneg && rightneg ) neg = true;
+        const LargeInteger& left = leftneg ? -*this : *this;
+        const LargeInteger& right = rightneg ? -d : d;
+        
+        if( d == 0 ) return num[ 0 ] / d.num[ 0 ];
+        
+        LargeInteger res( 0 );
+        LargeInteger r;
+        
+        for( int i = L*64; i >= 0; --i )
+          {
+             r <<= 1;
+             r |= ( ( left & ( (LargeInteger)1 << i ) ) != 0 ) ? 1 : 0;
+             if( r >= right )
+               {
+                  r -= right;
+                  res |= ( (LargeInteger)1 << i );
+               }
+          }
+        
+        res.r = new LargeInteger( r );
+        if( neg ) res.negate();
         return res;
      }
    
@@ -349,10 +398,74 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return *this;
      }
    
+   LargeInteger& operator-=( const LargeInteger& b )
+     {
+        *this = *this - b;
+        return *this;
+     }
+   
    LargeInteger& operator/=( int64_t i )
      {
         *this = *this / i;
         return *this;
+     }
+   
+   LargeInteger& operator|=( const LargeInteger& b )
+     {
+        *this = *this | b;
+        return *this;
+     }
+   
+   LargeInteger& operator<<=( int l )
+     {
+        *this = *this << l;
+        return *this;
+     }
+   
+   bool operator==( const LargeInteger& b ) const
+     {
+        for( int k = 0; k < L; ++k ) 
+          if( num[ k ] != b.num[ k ] ) 
+            return false;
+        return true;
+     }
+   
+   bool operator!=( const LargeInteger& b ) const
+     {
+        return !( *this == b );
+     }
+   
+   bool operator<( const LargeInteger& b ) const
+     {
+        for( int k = 0; k < L; ++k )
+          {
+             if( num[ k ] < b.num[ k ] )
+               return true;
+             else if( num[ k ] > b.num[ k ] )
+               return false;
+          }
+        return false;
+     }
+   
+   bool operator>=( const LargeInteger& b ) const
+     {
+        return !( *this < b );
+     }
+   
+   LargeInteger operator&( const LargeInteger& b ) const
+     {
+        LargeInteger res;
+        for( int k = 0; k < L; ++k )
+          res.num[ k ] = num[ k ] & b.num[ k ];
+        return res;
+     }
+   
+   LargeInteger operator|( const LargeInteger& b ) const
+     {
+        LargeInteger res;
+        for( int k = 0; k < L; ++k )
+          res.num[ k ] = num[ k ] | b.num[ k ];
+        return res;
      }
    
    operator std::string() const
@@ -373,7 +486,7 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         while( tmp.isPositive() )
           {
              tmp /= 10;
-             s += ( '0' + tmp.r );
+             s += ( '0' + tmp.r->num[ L-1 ] );
           }
         std::reverse( s.begin(), s.end() );
         return s;
@@ -392,7 +505,7 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
    
  private:
    uint64_t num[ L ];
-   uint64_t r;
+   LargeInteger* r;
    
    void negate()
      {
@@ -420,7 +533,8 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
      {
         for( int k = 0; k < L-1; ++k ) num[ k ] = 0;
         num[ L-1 ] = i;
-        r = 0;
+        if( r ) delete r;
+        r = NULL;
      }
    
    void parse( const std::string& s )
