@@ -189,3 +189,37 @@ TEST(LargeIntegerTest, Division)
    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
    ASSERT_DEATH( i1 / LargeInteger<1024>(), "" );
 }
+
+TEST(LargeIntegerTest, Modulo)
+{
+   string s1 = "2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   LargeInteger<1024> i1 = s1;
+   mpz_class i1gmp( s1 );
+   ASSERT_EQ( i1 % 4354657576 , atoll(mpz_class( i1gmp % mpz_class( 4354657576 ) ).get_str().c_str() ) );
+   
+   ASSERT_EQ( i1 % -4354657576, atoll(mpz_class( i1gmp % mpz_class( -4354657576 ) ).get_str().c_str() ) );
+   
+   string s2 = "-2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   LargeInteger<1024> i2 = s2;
+   mpz_class i2gmp( s2 );
+   ASSERT_EQ( i2 % 4354657576, atoll(mpz_class( i2gmp % mpz_class( 4354657576 ) ).get_str().c_str() ) );
+   
+   ASSERT_EQ( i2 % -4354657576, atoll(mpz_class( i2gmp % mpz_class( -4354657576 ) ).get_str().c_str() ) );
+   
+   string s3 = "122435843953723954234958473942035374349544738992998187456783424737538394220";
+   LargeInteger<1024> i3 = s3;
+   mpz_class i3gmp( s3 );
+   ASSERT_EQ( (string)( i1 % i3 ), mpz_class( i1gmp % i3gmp ).get_str() );
+   
+   string s4 = "-122435843953723954234958473942035374349544738992998187456783424737538394220";
+   LargeInteger<1024> i4 = s4;
+   mpz_class i4gmp( s4 );
+   ASSERT_EQ( (string)( i1 % i4 ), mpz_class( i1gmp % i4gmp ).get_str() );
+   
+   ASSERT_EQ( (string)( i2 % i4 ), mpz_class( i2gmp % i4gmp ).get_str() );
+   
+   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+   ASSERT_DEATH( i1 % LargeInteger<1024>(), "" );
+   
+   ASSERT_EQ( (string)( i1 / i3 ).getRemaining(), mpz_class( i1gmp % i3gmp ).get_str() );
+}

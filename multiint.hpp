@@ -333,6 +333,7 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         
         res.r = new LargeInteger( (uint64_t)r );
         if( neg ) res.negate();
+        if(leftneg) res.r->negate();
         return res;
      }
    
@@ -409,7 +410,58 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         
         res.r = new LargeInteger( r );
         if( neg ) res.negate();
+        if(leftneg) res.r->negate();
         return res;
+     }
+   
+   uint64_t operator%( uint64_t d ) const
+     {
+        return ( *this / d ).r->num[ L-1 ];
+     }
+   
+   int64_t operator%( int64_t d ) const
+     {
+        return *(int64_t*)(&( *this / d ).r->num[ L-1 ]);
+     }
+   
+   uint32_t operator%( uint32_t d ) const
+     {
+        return ( *this / d ).r->num[ L-1 ];
+     }
+   
+   int32_t operator%( int32_t d ) const
+     {
+        return *(int32_t*)(&( *this / d ).r->num[ L-1 ] );
+     }
+   
+   uint16_t operator%( uint16_t d ) const
+     {
+        return ( *this / d ).r->num[ L-1 ];
+     }
+   
+   int16_t operator%( int16_t d ) const
+     {
+        return *(int16_t*)(&( *this / d ).r->num[ L-1 ] );
+     }
+   
+   uint8_t operator%( uint8_t d ) const
+     {
+        return ( *this / d ).r->num[ L-1 ];
+     }
+   
+   int8_t operator%( int8_t d ) const
+     {
+        return *(int8_t*)(&( *this / d ).r->num[ L-1 ] );
+     }
+   
+   LargeInteger operator%( const LargeInteger& d ) const
+     {
+        return *( *this / d ).r;
+     }
+   
+   const LargeInteger& getRemaining() const
+     {
+        return *r;
      }
    
    LargeInteger operator<<( int l ) const
