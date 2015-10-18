@@ -336,6 +336,52 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return res;
      }
    
+   LargeInteger operator/( uint64_t i ) const
+     {
+        LargeInteger res( 0 );
+        uint128_t r( 0 );
+        
+        for( int k = 0; k < L; ++k )
+          {
+             r = (uint128_t)r << 64 | (uint128_t)num[k];
+             res.num[k] = r / i;
+             r %= i;
+          }
+        
+        res.r = new LargeInteger( (uint64_t)r );
+        return res;
+     }
+   
+   LargeInteger operator/( int32_t i ) const
+     {
+        return *this / (int64_t)i;
+     }
+   
+   LargeInteger operator/( uint32_t i ) const
+     {
+        return *this / (uint64_t)i;
+     }
+   
+   LargeInteger operator/( int16_t i ) const
+     {
+        return *this / (int64_t)i;
+     }
+   
+   LargeInteger operator/( uint16_t i ) const
+     {
+        return *this / (uint64_t)i;
+     }
+   
+   LargeInteger operator/( int8_t i ) const
+     {
+        return *this / (int64_t)i;
+     }
+   
+   LargeInteger operator/( uint8_t i ) const
+     {
+        return *this / (uint64_t)i;
+     }
+   
    LargeInteger operator/( const LargeInteger& d ) const
      {
         bool leftneg = isNegative();
