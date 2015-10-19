@@ -233,3 +233,13 @@ TEST(LargeIntegerTest, Increments)
    ASSERT_EQ( (string)i1++, (string)(LargeInteger<1024>(s1) + 1 ) );
    ASSERT_EQ( (string)i1, (string)(LargeInteger<1024>(s1) + 2 ) );
 }
+
+TEST(LargeIntegerTest, Decrements)
+{
+   string s1 = "2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   LargeInteger<1024> i1 = s1;
+   ASSERT_EQ( (string)--i1, (string)(LargeInteger<1024>(s1) - 1 ) );
+   ASSERT_EQ( (string)i1, (string)(LargeInteger<1024>(s1) - 1 ) );
+   ASSERT_EQ( (string)i1--, (string)(LargeInteger<1024>(s1) - 1 ) );
+   ASSERT_EQ( (string)i1, (string)(LargeInteger<1024>(s1) - 2 ) );
+}
