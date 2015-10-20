@@ -76,6 +76,10 @@ TEST(LargeIntegerTest, Addition)
    
    ASSERT_EQ( (string)( i1 + -4354657576 ), mpz_class( i1gmp + mpz_class( -4354657576 ) ).get_str() );
    
+   ASSERT_EQ( (string)( 4354657576 + i1 ), mpz_class( mpz_class( 4354657576 ) + i1gmp ).get_str() );
+   
+   ASSERT_EQ( (string)( -4354657576 + i1 ), mpz_class( mpz_class( -4354657576 ) + i1gmp ).get_str() );
+   
    string s2 = "122435843953723954234958473942043735374349544738992998187456783424737538394220";
    LargeInteger<1024> i2 = s2;
    mpz_class i2gmp( s2 );
@@ -95,6 +99,10 @@ TEST(LargeIntegerTest, Subtraction)
    ASSERT_EQ( (string)( i1 - 4354657576 ), mpz_class( i1gmp - mpz_class( 4354657576 ) ).get_str() );
    
    ASSERT_EQ( (string)( i1 - -4354657576 ), mpz_class( i1gmp - mpz_class( -4354657576 ) ).get_str() );
+   
+   ASSERT_EQ( (string)( 4354657576 - i1 ), mpz_class( mpz_class( 4354657576 ) - i1gmp ).get_str() );
+   
+   ASSERT_EQ( (string)( -4354657576 - i1 ), mpz_class( mpz_class( -4354657576 ) - i1gmp ).get_str() );
    
    string s2 = "122435843953723954234958473942043735374349544738992998187456783424737538394220";
    LargeInteger<1024> i2 = s2;
@@ -138,12 +146,20 @@ TEST(LargeIntegerTest, Multiplication)
    
    ASSERT_EQ( (string)( i1 * -4354657576 ), mpz_class( i1gmp * mpz_class( -4354657576 ) ).get_str() );
    
+   ASSERT_EQ( (string)( 4354657576 * i1 ), mpz_class( mpz_class( 4354657576 ) * i1gmp ).get_str() );
+   
+   ASSERT_EQ( (string)( -4354657576 * i1 ), mpz_class( mpz_class( -4354657576 ) * i1gmp ).get_str() );
+   
    string s2 = "-2324562324354654768987455344234356324354656757858568764654657657587686786786";
    LargeInteger<1024> i2 = s2;
    mpz_class i2gmp( s2 );
    ASSERT_EQ( (string)( i2 * 4354657576 ), mpz_class( i2gmp * mpz_class( 4354657576 ) ).get_str() );
    
    ASSERT_EQ( (string)( i2 * -4354657576 ), mpz_class( i2gmp * mpz_class( -4354657576 ) ).get_str() );
+   
+   ASSERT_EQ( (string)( 4354657576 * i2 ), mpz_class( mpz_class( 4354657576 ) * i2gmp ).get_str() );
+   
+   ASSERT_EQ( (string)( -4354657576 * i2 ), mpz_class( mpz_class( -4354657576 ) * i2gmp ).get_str() );
    
    string s3 = "122435843953723954234958473942043735374349544738992998187456783424737538394220";
    LargeInteger<1024> i3 = s3;
@@ -167,12 +183,20 @@ TEST(LargeIntegerTest, Division)
    
    ASSERT_EQ( (string)( i1 / -4354657576 ), mpz_class( i1gmp / mpz_class( -4354657576 ) ).get_str() );
    
+   ASSERT_EQ( (string)( 4354657576 / i1 ), mpz_class( mpz_class( 4354657576 ) / i1gmp ).get_str() );
+   
+   ASSERT_EQ( (string)( -4354657576 / i1 ), mpz_class( mpz_class( -4354657576 ) / i1gmp ).get_str() );
+   
    string s2 = "-2324562324354654768987455344234356324354656757858568764654657657587686786786";
    LargeInteger<1024> i2 = s2;
    mpz_class i2gmp( s2 );
    ASSERT_EQ( (string)( i2 / 4354657576 ), mpz_class( i2gmp / mpz_class( 4354657576 ) ).get_str() );
    
    ASSERT_EQ( (string)( i2 / -4354657576 ), mpz_class( i2gmp / mpz_class( -4354657576 ) ).get_str() );
+   
+   ASSERT_EQ( (string)( 4354657576 / i2 ), mpz_class( mpz_class( 4354657576 ) / i2gmp ).get_str() );
+   
+   ASSERT_EQ( (string)( -4354657576 / i2 ), mpz_class( mpz_class( -4354657576 ) / i2gmp ).get_str() );
    
    string s3 = "122435843953723954234958473942035374349544738992998187456783424737538394220";
    LargeInteger<1024> i3 = s3;
@@ -199,12 +223,20 @@ TEST(LargeIntegerTest, Modulo)
    
    ASSERT_EQ( i1 % -4354657576, atoll(mpz_class( i1gmp % mpz_class( -4354657576 ) ).get_str().c_str() ) );
    
+   ASSERT_EQ( 4354657576 % i1, atoll(mpz_class( mpz_class( 4354657576 ) % i1gmp ).get_str().c_str() ) );
+   
+   ASSERT_EQ( -4354657576 % i1, atoll(mpz_class( mpz_class( -4354657576 ) % i1gmp ).get_str().c_str() ) );
+   
    string s2 = "-2324562324354654768987455344234356324354656757858568764654657657587686786786";
    LargeInteger<1024> i2 = s2;
    mpz_class i2gmp( s2 );
    ASSERT_EQ( i2 % 4354657576, atoll(mpz_class( i2gmp % mpz_class( 4354657576 ) ).get_str().c_str() ) );
    
    ASSERT_EQ( i2 % -4354657576, atoll(mpz_class( i2gmp % mpz_class( -4354657576 ) ).get_str().c_str() ) );
+   
+   ASSERT_EQ( 4354657576 % i2, atoll(mpz_class( mpz_class( 4354657576 ) % i2gmp ).get_str().c_str() ) );
+   
+   ASSERT_EQ( -4354657576 % i2, atoll(mpz_class( mpz_class( -4354657576 ) % i2gmp ).get_str().c_str() ) );
    
    string s3 = "122435843953723954234958473942035374349544738992998187456783424737538394220";
    LargeInteger<1024> i3 = s3;

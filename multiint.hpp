@@ -30,6 +30,8 @@ SOFTWARE.
 #include <algorithm>
 #include <stdexcept>
 
+#define CPP11VERSION 199711L
+
 #ifdef __SIZEOF_INT128__
 #define USE_NATIVE_INT128
 #endif
@@ -615,6 +617,23 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         std::reverse( s.begin(), s.end() );
         return s;
      }
+
+#if __cplusplus > CPP11VERSION
+   explicit operator uint64_t() const
+     {
+        return num[ L-1 ];
+     }
+   
+   explicit operator int64_t() const
+     {
+        return num[ L-1 ];
+     }
+#endif
+   
+   uint64_t toInt64() const
+     {
+        return num[ L-1 ];
+     }
    
    bool isNegative() const
      {
@@ -715,5 +734,30 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         *this = tmp;
      }
 };
+
+template< int W, typename u128, typename l > LargeInteger< W, u128 > operator+( l i, const LargeInteger< W, u128 >& j )
+{
+   return j + i;
+}
+
+template< int W, typename u128, typename l > LargeInteger< W, u128 > operator-( l i, const LargeInteger< W, u128 >& j )
+{
+   return -j + i;
+}
+
+template< int W, typename u128, typename l > LargeInteger< W, u128 > operator*( l i, const LargeInteger< W, u128 >& j )
+{
+   return j * i;
+}
+
+template< int W, typename u128, typename l > LargeInteger< W, u128 > operator/( l i, const LargeInteger< W, u128 >& j )
+{
+   return LargeInteger< W, u128 >( i ) / j;
+}
+
+template< int W, typename u128, typename l > l operator%( l i, const LargeInteger< W, u128 >& j )
+{
+   return (l)(LargeInteger< W, u128 >( i ) % j).toInt64();
+}
 
 #endif // MULTIINT_HPP

@@ -7,6 +7,7 @@ set(CMAKE_BUILD_TYPE Release)
 
 add_subdirectory(/usr/src/gtest gtest)
 
+add_definitions(-std=c++11)
 add_executable(tests unit_tests.cpp)
 
 target_link_libraries(tests gtest gtest_main gmp)
