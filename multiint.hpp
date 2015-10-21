@@ -492,6 +492,14 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return tmp;
      }
    
+   bool operator==( const LargeInteger& b ) const
+     {
+        for( int k = 0; k < L; ++k ) 
+          if( num[ k ] != b.num[ k ] ) 
+            return false;
+        return true;
+     }
+   
    LargeInteger operator<<( int l ) const
      {
         LargeInteger res = *this;
@@ -546,14 +554,6 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
      {
         *this = *this << l;
         return *this;
-     }
-   
-   bool operator==( const LargeInteger& b ) const
-     {
-        for( int k = 0; k < L; ++k ) 
-          if( num[ k ] != b.num[ k ] ) 
-            return false;
-        return true;
      }
    
    bool operator!=( const LargeInteger& b ) const
