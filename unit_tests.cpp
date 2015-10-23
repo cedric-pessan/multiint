@@ -323,3 +323,25 @@ TEST(LargeIntegerTest, Greater)
    ASSERT_EQ( LargeInteger<1024>( "1234" ) > 1234, false );
    ASSERT_EQ( LargeInteger<1024>( "1234" ) > -1234, true );
 }
+
+TEST(LargeIntegerTest, Less)
+{
+   string s1 = "2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   string s2 = "122435843953723954234958473942043735374349544738992998187456783424737538394220";
+   string s3 = "-2324562324354654768987455344234356324354656757858568764654657657587686786786";
+   string s4 = "-122435843953723954234958473942043735374349544738992998187456783424737538394220";
+   LargeInteger<1024> i1 = s1;
+   LargeInteger<1024> i2 = s2;
+   LargeInteger<1024> i3 = s3;
+   LargeInteger<1024> i4 = s4;
+   LargeInteger<1024> i5 = s1;
+   ASSERT_EQ( i1 < i2, true );
+   ASSERT_EQ( i1 < i3, false );
+   ASSERT_EQ( i1 < i5, false );
+   ASSERT_EQ( i2 < i1, false );
+   ASSERT_EQ( i3 < i1, true );
+   ASSERT_EQ( i3 < i4, false );
+   ASSERT_EQ( i4 < i3, true );
+   ASSERT_EQ( LargeInteger<1024>( "1234" ) < 1234, false );
+   ASSERT_EQ( LargeInteger<1024>( "1234" ) < -1234, false );
+}
