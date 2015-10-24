@@ -389,3 +389,14 @@ TEST(LargeIntegerTest, LessOrEqual)
    ASSERT_EQ( LargeInteger<1024>( "1234" ) <= 1234, true );
    ASSERT_EQ( LargeInteger<1024>( "1234" ) <= -1234, false );
 }
+
+TEST(LargeIntegerTest, BitwiseNot)
+{
+   string s1 = "0x12e243F58439537239542349584A739420437353743b49544738992998187456c783424737538394220";
+   string s2 = "0xed1dbc0a7bc6ac8dc6abdcb6a7b58c6bdfbc8cac8bc4b6abb8c766d667e78ba9387cbdb8c8ac7c6bddf";
+   string s3 = "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+   LargeInteger<1024> i1 = s1;
+   LargeInteger<1024> i2 = s2;
+   LargeInteger<1024> i3 = s3;
+   ASSERT_EQ( (~i1 & i3 ) == i2, true );
+}
