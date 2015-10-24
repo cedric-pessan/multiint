@@ -524,6 +524,11 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return false;
      }
    
+   bool operator>=( const LargeInteger& b ) const
+     {
+        return !( *this < b );
+     }
+   
    LargeInteger operator<<( int l ) const
      {
         LargeInteger res = *this;
@@ -578,11 +583,6 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
      {
         *this = *this << l;
         return *this;
-     }
-   
-   bool operator>=( const LargeInteger& b ) const
-     {
-        return !( *this < b );
      }
    
    LargeInteger operator&( const LargeInteger& b ) const
