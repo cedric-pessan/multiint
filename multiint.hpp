@@ -529,6 +529,11 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return !( *this < b );
      }
    
+   bool operator<=( const LargeInteger& b ) const
+     {
+        return ( *this < b ) || ( *this == b );
+     }
+   
    LargeInteger operator<<( int l ) const
      {
         LargeInteger res = *this;
