@@ -542,6 +542,14 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return res;
      }
    
+   LargeInteger operator&( const LargeInteger& b ) const
+     {
+        LargeInteger res;
+        for( int k = 0; k < L; ++k )
+          res.num[ k ] = num[ k ] & b.num[ k ];
+        return res;
+     }
+   
    LargeInteger operator<<( int l ) const
      {
         LargeInteger res = *this;
@@ -596,14 +604,6 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
      {
         *this = *this << l;
         return *this;
-     }
-   
-   LargeInteger operator&( const LargeInteger& b ) const
-     {
-        LargeInteger res;
-        for( int k = 0; k < L; ++k )
-          res.num[ k ] = num[ k ] & b.num[ k ];
-        return res;
      }
    
    LargeInteger operator|( const LargeInteger& b ) const
