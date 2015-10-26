@@ -422,3 +422,14 @@ TEST(LargeIntegerTest, BitwiseOr)
    LargeInteger<1024> i3 = s3;
    ASSERT_EQ( (i1 | i2 ) == i3, true );
 }
+
+TEST(LargeIntegerTest, BitwiseXor)
+{
+   string s1 = "0x12e243F58439537239542349584A739420437353743b49544738992998187456c783424737538394220";
+   string s2 = "0x00000002324562324354654768987455344234356324354656757858568764654657657587686786786";
+   string s3 = "0x12e243f7b67c31407a00460e30d207c114014766171f7c12114de171ce9f103381d42732b03be4125a6";
+   LargeInteger<1024> i1 = s1;
+   LargeInteger<1024> i2 = s2;
+   LargeInteger<1024> i3 = s3;
+   ASSERT_EQ( (i1 ^ i2 ) == i3, true );
+}
