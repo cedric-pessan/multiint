@@ -433,3 +433,14 @@ TEST(LargeIntegerTest, BitwiseXor)
    LargeInteger<1024> i3 = s3;
    ASSERT_EQ( (i1 ^ i2 ) == i3, true );
 }
+
+TEST(LargeIntegerTest, LeftShift)
+{
+   string s1 = "0x12e243F58439537239542349584A739420437353743b49544738992998187456c783424737538394220";
+   int shift = 230;
+   
+   LargeInteger<1024> i1 = s1;
+   LargeInteger<1024> i2 = s1;
+   for( int i=0; i<shift; ++i ) i2 *= 2;
+   ASSERT_EQ( ( i1 << shift ), i2 );
+}
