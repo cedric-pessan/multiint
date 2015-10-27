@@ -444,3 +444,19 @@ TEST(LargeIntegerTest, LeftShift)
    for( int i=0; i<shift; ++i ) i2 *= 2;
    ASSERT_EQ( ( i1 << shift ), i2 );
 }
+
+TEST(LargeIntegerTest, RightShift)
+{
+   string s1 = "0x12e243F58439537239542349584A739420437353743b49544738992998187456c783424737538394220";
+   int shift = 230;
+   
+   LargeInteger<1024> i1 = s1;
+   LargeInteger<1024> i2 = s1;
+   for( int i=0; i<shift; ++i ) i2 /= 2;
+   ASSERT_EQ( ( i1 >> shift ), i2 );
+   
+   string s2 = "-122435843953723954234958473942043735374349544738992998187456783424737538394220";
+   i1 = s2;
+   shift = 95;
+   ASSERT_EQ( (string)( i1 >> shift ), mpz_class( mpz_class( s2 ) >> shift ).get_str() );
+}

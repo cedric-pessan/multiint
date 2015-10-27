@@ -586,6 +586,26 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return res;
      }
    
+   LargeInteger operator>>( int r ) const
+     {
+        LargeInteger res = *this;
+        while( r >= 64 )
+          {
+             for( int k=L-1; k>0; --k )
+               res.num[ k ] = res.num[ k-1 ];
+             res.num[ 0 ] = (int64_t)res.num[ 0 ] >> 63;
+             r -= 64;
+          }
+        
+        for( int k=L-1; k>0; --k )
+          {
+             res.num[ k ] >>= r;
+             res.num[ k ] |= ( ( res.num[ k-1 ] & ( ( 1 << r ) - 1 ) ) << (64-r) );
+          }
+        res.num[ 0 ] = (int64_t)res.num[ 0 ] >> r;
+        return res;
+     }
+   
    LargeInteger& operator*=( const LargeInteger& b )
      {
         *this = *this * b;
