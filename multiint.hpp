@@ -606,12 +606,6 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return res;
      }
    
-   LargeInteger& operator*=( const LargeInteger& b )
-     {
-        *this = *this * b;
-        return *this;
-     }
-   
    LargeInteger& operator+=( const LargeInteger& b )
      {
         *this = *this + b;
@@ -624,9 +618,171 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return *this;
      }
    
+   LargeInteger& operator*=( const LargeInteger& b )
+     {
+        *this = *this * b;
+        return *this;
+     }
+   
+   LargeInteger& operator*=( uint64_t i )
+     {
+        *this = *this * i;
+        return *this;
+     }
+   
+   LargeInteger& operator*=( int64_t i )
+     {
+        *this = *this * i;
+        return *this;
+     }
+   
+   LargeInteger& operator*=( uint32_t i )
+     {
+        *this = *this * i;
+        return *this;
+     }
+   
+   LargeInteger& operator*=( int32_t i )
+     {
+        *this = *this * i;
+        return *this;
+     }
+   
+   LargeInteger& operator*=( uint16_t i )
+     {
+        *this = *this * i;
+        return *this;
+     }
+   
+   LargeInteger& operator*=( int16_t i )
+     {
+        *this = *this * i;
+        return *this;
+     }
+   
+   LargeInteger& operator*=( uint8_t i )
+     {
+        *this = *this * i;
+        return *this;
+     }
+   
+   LargeInteger& operator*=( int8_t i )
+     {
+        *this = *this * i;
+        return *this;
+     }
+   
+   LargeInteger& operator/=( const LargeInteger& b )
+     {
+        *this = *this / b;
+        return *this;
+     }
+   
+   LargeInteger& operator/=( uint64_t i )
+     {
+        *this = *this / i;
+        return *this;
+     }
+   
    LargeInteger& operator/=( int64_t i )
      {
         *this = *this / i;
+        return *this;
+     }
+   
+   LargeInteger& operator/=( uint32_t i )
+     {
+        *this = *this / i;
+        return *this;
+     }
+   
+   LargeInteger& operator/=( int32_t i )
+     {
+        *this = *this / i;
+        return *this;
+     }
+   
+   LargeInteger& operator/=( uint16_t i )
+     {
+        *this = *this / i;
+        return *this;
+     }
+   
+   LargeInteger& operator/=( int16_t i )
+     {
+        *this = *this / i;
+        return *this;
+     }
+   
+   LargeInteger& operator/=( uint8_t i )
+     {
+        *this = *this / i;
+        return *this;
+     }
+   
+   LargeInteger& operator/=( int8_t i )
+     {
+        *this = *this / i;
+        return *this;
+     }
+   
+   LargeInteger& operator%=( const LargeInteger& b )
+     {
+        *this = *this % b;
+        return *this;
+     }
+   
+   LargeInteger& operator%=( uint64_t i )
+     {
+        *this = *this % i;
+        return *this;
+     }
+   
+   LargeInteger& operator%=( int64_t i )
+     {
+        *this = *this % i;
+        return *this;
+     }
+   
+   LargeInteger& operator%=( uint32_t i )
+     {
+        *this = *this % i;
+        return *this;
+     }
+   
+   LargeInteger& operator%=( int32_t i )
+     {
+        *this = *this % i;
+        return *this;
+     }
+   
+   LargeInteger& operator%=( uint16_t i )
+     {
+        *this = *this % i;
+        return *this;
+     }
+   
+   LargeInteger& operator%=( int16_t i )
+     {
+        *this = *this % i;
+        return *this;
+     }
+   
+   LargeInteger& operator%=( uint8_t i )
+     {
+        *this = *this % i;
+        return *this;
+     }
+   
+   LargeInteger& operator%=( int8_t i )
+     {
+        *this = *this % i;
+        return *this;
+     }
+   
+   LargeInteger& operator&=( const LargeInteger& b )
+     {
+        *this = *this & b;
         return *this;
      }
    
@@ -636,9 +792,21 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         return *this;
      }
    
+   LargeInteger& operator^=( const LargeInteger& b )
+     {
+        *this = *this ^ b;
+        return *this;
+     }
+   
    LargeInteger& operator<<=( int l )
      {
         *this = *this << l;
+        return *this;
+     }
+   
+   LargeInteger& operator>>=( int l )
+     {
+        *this = *this >> l;
         return *this;
      }
    
@@ -673,6 +841,11 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
      }
    
    explicit operator int64_t() const
+     {
+        return (int64_t)num[ L-1 ];
+     }
+   
+   explicit operator uint32_t() const
      {
         return num[ L-1 ];
      }
