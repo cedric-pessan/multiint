@@ -837,23 +837,83 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
 #if __cplusplus > CPP11VERSION
    explicit operator uint64_t() const
      {
-        return num[ L-1 ];
+        return toUInt64();
      }
    
    explicit operator int64_t() const
      {
-        return (int64_t)num[ L-1 ];
+        return toInt64();
      }
    
    explicit operator uint32_t() const
      {
-        return num[ L-1 ];
+        return (uint32_t)toUInt64();
+     }
+   
+   explicit operator int32_t() const
+     {
+        return (int32_t)toInt64();
+     }
+   
+   explicit operator uint16_t() const
+     {
+        return (uint16_t)toUInt64();
+     }
+   
+   explicit operator int16_t() const
+     {
+        return (int16_t)toInt64();
+     }
+   
+   explicit operator uint8_t() const
+     {
+        return (uint8_t)toUInt64();
+     }
+   
+   explicit operator int8_t() const
+     {
+        return (int8_t)toInt64();
      }
 #endif
    
-   uint64_t toInt64() const
+   uint64_t toUInt64() const
      {
         return num[ L-1 ];
+     }
+   
+   int64_t toInt64() const
+     {
+        return (int64_t)num[ L-1 ];
+     }
+   
+   uint32_t toUInt32() const
+     {
+        return (uint32_t)toUInt64();
+     }
+   
+   int32_t toInt32() const
+     {
+        return (int32_t)toInt64();
+     }
+   
+   uint16_t toUInt16() const
+     {
+        return (uint16_t)toUInt64();
+     }
+   
+   int16_t toInt16() const
+     {
+        return (int16_t)toInt64();
+     }
+   
+   uint8_t toUInt8() const
+     {
+        return (uint8_t)toUInt64();
+     }
+   
+   int8_t toInt8() const
+     {
+        return (int8_t)toInt64();
      }
    
    bool isNegative() const
@@ -978,7 +1038,7 @@ template< int W, typename u128, typename l > LargeInteger< W, u128 > operator/( 
 
 template< int W, typename u128, typename l > l operator%( l i, const LargeInteger< W, u128 >& j )
 {
-   return (l)(LargeInteger< W, u128 >( i ) % j).toInt64();
+   return (l)(LargeInteger< W, u128 >( i ) % j).toUInt64();
 }
 
 #endif // MULTIINT_HPP

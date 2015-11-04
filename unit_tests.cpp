@@ -460,3 +460,12 @@ TEST(LargeIntegerTest, RightShift)
    shift = 95;
    ASSERT_EQ( (string)( i1 >> shift ), mpz_class( mpz_class( s2 ) >> shift ).get_str() );
 }
+
+TEST(LargeIntegerTest, Cast)
+{
+   LargeInteger<1024> i1( 1234567 );
+   ASSERT_EQ( ( int64_t )( i1 ), 1234567 );
+   
+   LargeInteger<1024> i2( -1234567 );
+   ASSERT_EQ( ( int64_t )( i2 ), -1234567 );
+}
