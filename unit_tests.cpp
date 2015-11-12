@@ -469,3 +469,125 @@ TEST(LargeIntegerTest, Cast)
    LargeInteger<1024> i2( -1234567 );
    ASSERT_EQ( ( int64_t )( i2 ), -1234567 );
 }
+
+TEST(LargeIntegerTest, OutputStreams)
+{
+   string s = "122435843953723954234958473942043735374349544738992998187456783424737538394220";
+   LargeInteger<1024> i( s );
+   
+   std::stringstream ss;
+   ss << i;
+   ASSERT_EQ( s, ss.str() );
+   
+   string s2 = "0x12e243f58439537239542349584a739420437353743b49544738992998187456c783424737538394220";
+   LargeInteger<1024> i2( s2 );
+   ss.str( "" );
+   ss << std::hex << i2;
+   ASSERT_EQ( s2.substr( 2 ), ss.str() );
+   
+   string s3 = "0122435743753723754234757473742043735374347544737772777177456773424737537374220";
+   LargeInteger<1024> i3( s3 );
+   ss.str( "" );
+   ss << std::oct << i3;
+   ASSERT_EQ( s3.substr( 1 ), ss.str() );
+   
+   ss.str( "" );
+   ss << std::dec << std::showbase << i;
+   ASSERT_EQ( s, ss.str() );
+   
+   ss.str( "" );
+   ss << std::hex << std::showbase << i2;
+   ASSERT_EQ( s2, ss.str() );
+   
+   ss.str( "" );
+   ss << std::oct << std::showbase << i3;
+   ASSERT_EQ( s3, ss.str() );
+   
+   ss.str( "" );
+   ss << std::dec << std::showpos << i;
+   ASSERT_EQ( string("+") + s, ss.str() );
+   
+   ss.str( "" );
+   ss << std::hex << std::showpos << i2;
+   ASSERT_EQ( s2, ss.str() );
+   
+   ss.str( "" );
+   ss << std::oct << std::showpos << i3;
+   ASSERT_EQ( s3, ss.str() );
+   
+   ss.str( "" );
+   string sup2 = s2;
+   std::transform( sup2.begin(), sup2.end(), sup2.begin(), ::toupper );
+   ss << std::hex << std::noshowpos << std::showbase << std::uppercase << i2;
+   ASSERT_EQ( sup2, ss.str() );
+   
+   ss.str( "" );
+   ss << std::noshowbase << i2;
+   ASSERT_EQ( sup2.substr( 2 ), ss.str() );
+   
+   ss.str( "" );
+   ss << std::dec << std::internal << std::showbase << std::setfill( '*' ) << std::setw( 4 ) << i;
+   ASSERT_EQ( s, ss.str() );
+   
+   ss.str( "" );
+   ss << std::setw( 100 ) << i;
+   ASSERT_EQ( string( 100 - s.length(), '*' ) + s, ss.str() );
+   
+   ss.str( "" );
+   ss << std::showpos << std::setw( 100 ) << i;
+   ASSERT_EQ( string( "+" ) + string( 100 - s.length() - 1, '*' ) + s, ss.str() );
+   
+   string s4 = "-122435843953723954234958473942043735374349544738992998187456783424737538394220";
+   LargeInteger<1024> i4( s4 );
+   ss.str( "" );
+   ss << std::setw( 100 ) << i4;
+   ASSERT_EQ( string( "-" ) + string( 100 - s4.length(), '*' ) + s4.substr( 1 ), ss.str() );
+   
+   ss.str( "" );
+   ss << std::hex << std::nouppercase << std::setw( 100 ) << i2;
+   ASSERT_EQ( string( "0x" ) + string( 100 - s2.length(), '*' ) + s2.substr( 2 ), ss.str() );
+   
+   ss.str( "" );
+   ss << std::oct << std::setw( 100 ) << i3;
+   ASSERT_EQ( string( 100 - s3.length(), '*' ) + s3, ss.str() );
+   
+   ss.str( "" );
+   ss << std::noshowpos << std::dec << std::left << std::setw( 100 ) << i;
+   ASSERT_EQ( s + string( 100 - s.length(), '*' ), ss.str() );
+   
+   ss.str( "" );
+   ss << std::showpos << std::setw( 100 ) << i;
+   ASSERT_EQ( string( "+" ) + s + string( 100 - s.length() - 1, '*' ), ss.str() );
+   
+   ss.str( "" );
+   ss << std::setw( 100 ) << i4;
+   ASSERT_EQ( string( "-" ) + s4.substr( 1 ) + string( 100 - s4.length(), '*' ), ss.str() );
+   
+   ss.str( "" );
+   ss << std::hex << std::setw( 100 ) << i2;
+   ASSERT_EQ( s2 + string( 100 - s2.length(), '*' ), ss.str() );
+   
+   ss.str( "" );
+   ss << std::oct << std::setw( 100 ) << i3;
+   ASSERT_EQ( s3 + string( 100 - s3.length(), '*' ), ss.str() );
+   
+   ss.str( "" );
+   ss << std::noshowpos << std::dec << std::right << std::setw( 100 ) << i;
+   ASSERT_EQ( string( 100 - s.length(), '*' ) + s, ss.str() );
+   
+   ss.str( "" );
+   ss << std::showpos << std::setw( 100 ) << i;
+   ASSERT_EQ( string( 100 - s.length() - 1, '*' ) + '+' + s, ss.str() );
+   
+   ss.str( "" );
+   ss << std::setw( 100 ) << i4;
+   ASSERT_EQ( string( 100 - s4.length(), '*' ) + s4, ss.str() );
+   
+   ss.str( "" );
+   ss << std::hex << std::setw( 100 ) << i2;
+   ASSERT_EQ( string( 100 - s2.length(), '*' ) + s2, ss.str() );
+   
+   ss.str( "" );
+   ss << std::oct << std::setw( 100 ) << i3;
+   ASSERT_EQ( string( 100 - s3.length(), '*' ) + s3, ss.str() );
+}

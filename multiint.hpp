@@ -29,6 +29,9 @@ SOFTWARE.
 #include <stdint.h>
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <cstdlib>
 
 #define CPP11VERSION 199711L
 
@@ -833,6 +836,45 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
         std::reverse( s.begin(), s.end() );
         return s;
      }
+   
+   std::string toHexString() const
+     {
+        std::stringstream ss;
+        ss << std::hex;
+        
+        for( int i = 0; i < L; ++i )
+          {
+             ss << num[ i ];
+          }
+        
+        return ss.str().substr( ss.str().find_first_not_of( "0" ) );
+     }
+   
+   std::string toOctString() const
+     {
+        std::stringstream ss;
+        ss << std::oct;
+        int tmp = 0;
+        int count = (L*64)%3;
+        count = ( ( count & 1 ) << 1 ) | ( ( count >> 1 ) & 1 );
+        
+        for( int i = 0; i < L; ++i )
+          {
+             for( int j = 0; j < 64; ++j )
+               {
+                  tmp <<= 1;
+                  tmp |= ( num[ i ] >> ( 64 - j - 1 ) ) & 1;
+                  if( ++count == 3 )
+                    {
+                       ss << tmp;
+                       tmp = 0;
+                       count = 0;
+                    }
+               }
+          }
+        
+        return ss.str().substr( ss.str().find_first_not_of( "0" ) );
+     }
 
 #if __cplusplus > CPP11VERSION
    explicit operator uint64_t() const
@@ -1039,6 +1081,56 @@ template< int W, typename u128, typename l > LargeInteger< W, u128 > operator/( 
 template< int W, typename u128, typename l > l operator%( l i, const LargeInteger< W, u128 >& j )
 {
    return (l)(LargeInteger< W, u128 >( i ) % j).toUInt64();
+}
+
+template< int W, typename u128 > std::ostream& operator<<( std::ostream& os, const LargeInteger< W, u128 >& i )
+{
+   std::string prefix;
+   std::string number;
+   
+   if( ( os.flags() & os.basefield ) == os.dec )
+     {
+        if( ( os.flags() & os.showpos ) && !i.isNegative() ) prefix = "+";
+        number = ( std::string )i;
+        if( i.isNegative() )
+          {
+             prefix = "-";
+             number = number.substr( 1 );
+          }
+     }
+   else if( ( os.flags() & os.basefield ) == os.hex )
+     {
+        if( os.flags() & os.showbase ) prefix = "0x";
+        number = i.toHexString();
+        if( os.flags() & os.uppercase )
+          {
+             if( prefix.length() ) prefix = "0X";
+             std::transform( number.begin(), number.end(), number.begin(), ::toupper );
+          }
+     }
+   else if( ( os.flags() & os.basefield ) == os.oct )
+     {
+        if( os.flags() & os.showbase ) number = "0";
+        number += i.toOctString();
+     }
+   
+   if( os.width() > prefix.length() + number.length() )
+     {
+        std::string sfill( os.width() - prefix.length() - number.length(), os.fill() );
+        
+        if( ( os.flags() & os.adjustfield ) == os.internal )
+          os << ( prefix + sfill + number );
+        else if( ( os.flags() & os.adjustfield ) == os.left )
+          os << ( prefix + number + sfill );
+        else if( ( os.flags() & os.adjustfield ) == os.right )
+          os << ( sfill + prefix + number );
+     }
+   else
+     {
+        os << ( prefix + number );
+     }
+   
+   return os;
 }
 
 #endif // MULTIINT_HPP
