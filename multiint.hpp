@@ -1133,4 +1133,47 @@ template< int W, typename u128 > std::ostream& operator<<( std::ostream& os, con
    return os;
 }
 
+template< int W, typename u128 > std::istream& operator>>( std::istream& is, LargeInteger< W, u128 >& i )
+{
+   std::istream::sentry sen( is, false );
+   if( sen )
+     {
+        std::string s;
+        if( ( is.flags() & is.basefield ) == is.dec )
+          {
+             while( is.good() )
+               {
+                  char c = is.peek();
+                  if( c == EOF ) break;
+                  if( c >= '0' && c <= '9' ) s += c;
+                  else break;
+                  is.get();
+               }
+             i = s;
+          }
+        else if( ( is.flags() & is.basefield ) == is.hex )
+          {
+             s = "0x";
+             if( is.good() && is.peek() == '0' )
+               {
+                  s += '0';
+                  is.get();
+                  if( is.good() && is.peek() == 'x' ) is.get();
+               }
+             while( is.good() )
+               {
+                  char c = is.peek();
+                  if( c == EOF ) break;
+                  if( c >= '0' && c <= '9' ) s += c;
+                  else if( tolower(c) >= 'a' && tolower(c) <= 'z' ) s += c;
+                  else break;
+                  is.get();
+               }
+             i = s;
+          }
+     }
+   
+   return is;
+}
+
 #endif // MULTIINT_HPP

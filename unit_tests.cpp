@@ -591,3 +591,39 @@ TEST(LargeIntegerTest, OutputStreams)
    ss << std::oct << std::setw( 100 ) << i3;
    ASSERT_EQ( string( 100 - s3.length(), '*' ) + s3, ss.str() );
 }
+
+TEST(LargeIntegerTest, InputStreams)
+{
+   string s = "122435843953723954234958473942043735374349544738992998187456783424737538394220";
+   LargeInteger<1024> i( s );
+   string s2 = "0x12e243f58439537239542349584a739420437353743b49544738992998187456c783424737538394220";
+   LargeInteger<1024> i2( s2 );
+   string s3 = "0122435743753723754234757473742043735374347544737772777177456773424737537374220";
+   LargeInteger<1024> i3( s3 );
+   string s4 = "-122435843953723954234958473942043735374349544738992998187456783424737538394220";
+   LargeInteger<1024> i4( s4 );
+   
+   LargeInteger<1024> j;
+   std::stringstream ss;
+   ss << s;
+   ss >> j;
+   ASSERT_EQ( i, j );
+   
+   ss.str( "" );
+   ss.clear();
+   ss << "123e456";
+   ss >> j;
+   ASSERT_EQ( "123", (string)j );
+   
+   ss.str( "" );
+   ss.clear();
+   ss << s2;
+   ss >> std::hex >> j;
+   ASSERT_EQ( i2, j );
+   
+   ss.str( "" );
+   ss.clear();
+   ss << s2.substr( 2 );
+   ss >> std::hex >> j;
+   ASSERT_EQ( i2, j );
+}
