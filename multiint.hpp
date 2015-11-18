@@ -1141,6 +1141,15 @@ template< int W, typename u128 > std::istream& operator>>( std::istream& is, Lar
         std::string s;
         if( ( is.flags() & is.basefield ) == is.dec )
           {
+             if( is.good() )
+               {
+                  if( is.peek() == '-' )
+                    {
+                       char c = is.get();
+                       s += c;
+                    }
+                  else if( is.peek() == '+' ) is.get();
+               }
              while( is.good() )
                {
                   char c = is.peek();
@@ -1156,9 +1165,9 @@ template< int W, typename u128 > std::istream& operator>>( std::istream& is, Lar
              s = "0x";
              if( is.good() && is.peek() == '0' )
                {
-                  s += '0';
                   is.get();
                   if( is.good() && is.peek() == 'x' ) is.get();
+                  else s += '0';
                }
              while( is.good() )
                {
@@ -1166,6 +1175,21 @@ template< int W, typename u128 > std::istream& operator>>( std::istream& is, Lar
                   if( c == EOF ) break;
                   if( c >= '0' && c <= '9' ) s += c;
                   else if( tolower(c) >= 'a' && tolower(c) <= 'z' ) s += c;
+                  else break;
+                  is.get();
+               }
+             i = s;
+          }
+        else if( ( is.flags() & is.basefield ) == is.oct )
+          {
+             s = "0";
+             if( is.good() && is.peek() == '0' )
+               is.get();
+             while( is.good() )
+               {
+                  char c = is.peek();
+                  if( c == EOF ) break;
+                  if( c >= '0' && c <= '7' ) s += c;
                   else break;
                   is.get();
                }

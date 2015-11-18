@@ -626,4 +626,47 @@ TEST(LargeIntegerTest, InputStreams)
    ss << s2.substr( 2 );
    ss >> std::hex >> j;
    ASSERT_EQ( i2, j );
+   
+   ss.str( "" );
+   ss.clear();
+   ss << s2;
+   ss >> std::hex >> j;
+   ASSERT_EQ( i2, j );
+   
+   ss.str( "" );
+   ss.clear();
+   ss << s3.substr( 1 );
+   ss >> std::oct >> j;
+   ASSERT_EQ( i3, j );
+   
+   ss.str( "" );
+   ss.clear();
+   ss << s3;
+   ss >> std::oct >> j;
+   ASSERT_EQ( i3, j );
+   
+   ss.str( "" );
+   ss.clear();
+   ss << s4;
+   ss >> std::dec >> j;
+   ASSERT_EQ( i4, j );
+   
+   ss.str( "" );
+   ss.clear();
+   ss << "+" << s;
+   ss >> std::dec >> j;
+   ASSERT_EQ( i, j );
+   
+   ss.str( s + " " + s4 );
+   ss.clear();
+   LargeInteger<1024> k;
+   ss >> j >> k;
+   ASSERT_EQ( i, j );
+   ASSERT_EQ( i4, k );
+   
+   ss.str( s + " " + s4 );
+   ss.clear();
+   ss >> std::noskipws >> j >> k;
+   ASSERT_EQ( i, j );
+   ASSERT_EQ( LargeInteger<1024>( 0 ), k );
 }
