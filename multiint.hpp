@@ -42,6 +42,63 @@ SOFTWARE.
 #ifdef USE_NATIVE_INT128
 typedef unsigned __int128 uint128_t;
 #else
+class Basic128
+{
+ public:
+   Basic128( uint64_t i )
+     {
+        std::cout << "TODO: Basic128::Basic128(uint64_t)" << std::endl;
+     }
+   
+   Basic128 operator+( const Basic128& i ) const
+     {
+        std::cout << "TODO: Basic128::operator+( const Basic128& ) const" << std::endl;
+        return *this;
+     }
+   
+   Basic128 operator*( const Basic128& i ) const
+     {
+        std::cout << "TODO: Basic128::operator*( const Basic128& ) const" << std::endl;
+        return *this;
+     }
+   
+   int64_t operator/( uint64_t i ) const
+     {
+        std::cout << "TODO: Basic128::operator/( int64_t ) const" << std::endl;
+        return 0;
+     }
+   
+   uint64_t operator&( uint64_t i ) const
+     {
+        std::cout << "TODO: Basic128::operato&( uint64_t ) const" << std::endl;
+        return 0;
+     }
+   
+   Basic128 operator|( const Basic128& i ) const
+     {
+        std::cout << "TODO: Basic128::operator|( const Basic128& ) const" << std::endl;
+        return *this;
+     }
+   
+   Basic128 operator<<( int l ) const
+     {
+        std::cout << "TODO: Basic128::operator<<( int ) const" << std::endl;
+        return *this;
+     }
+   
+   uint64_t operator>>( int r ) const
+     {
+        std::cout << "TODO: Basic128::operator>>( int ) const" << std::endl;
+        return 0;
+     }
+   
+   Basic128 operator%=( uint64_t i )
+     {
+        std::cout << "TODO: Basic128::operator%=( int64_t ) const" << std::endl;
+        return *this;
+     }
+};
+
 typedef Basic128 uint128_t;
 #endif
 
@@ -207,7 +264,7 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
           {
              uint128_t tmp = (uint128_t)num[ k ] + (uint128_t)b.num[ k ] + (uint128_t)carry;
              carry = tmp >> 64;
-             res.num[ k ] = tmp & 0xFFFFFFFFFFFFFFFFLL;
+             res.num[ k ] = tmp & 0xFFFFFFFFFFFFFFFFULL;
           }
         
         return res;
@@ -255,15 +312,19 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
    
    LargeInteger operator*( uint64_t i ) const
      {
+        bool neg = isNegative();
+        const LargeInteger& left = neg ? -*this : *this;
+        
         LargeInteger res( 0 );
         uint64_t carry = 0;
         
         for( int k = L-1; k >= 0; --k )
           {
-             uint128_t tmp = (uint128_t)i * (uint128_t)num[k] + (uint128_t)carry;
+             uint128_t tmp = (uint128_t)i * (uint128_t)left.num[k] + (uint128_t)carry;
              carry = tmp >> 64;
              res.num[ k ] = tmp & 0xFFFFFFFFFFFFFFFFLL;
           }
+        if( neg ) res.negate();
         return res;
      }
    
@@ -336,7 +397,8 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
              r %= i;
           }
         
-        res.r = new LargeInteger( (uint64_t)r );
+        uint64_t r64 = r & 0xFFFFFFFFFFFFFFFFULL;
+        res.r = new LargeInteger( r64 );
         if( neg ) res.negate();
         if(leftneg) res.r->negate();
         return res;
@@ -344,17 +406,25 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
    
    LargeInteger operator/( uint64_t i ) const
      {
+        bool neg = isNegative();
+        const LargeInteger& left = neg ? -*this : *this;
+        
         LargeInteger res( 0 );
         uint128_t r( 0 );
         
         for( int k = 0; k < L; ++k )
           {
-             r = (uint128_t)r << 64 | (uint128_t)num[k];
+             r = (uint128_t)r << 64 | (uint128_t)left.num[k];
              res.num[k] = r / i;
              r %= i;
           }
         
         res.r = new LargeInteger( (uint64_t)r );
+        if( neg )
+          {
+             res.negate();
+             res.r->negate();
+          }
         return res;
      }
    

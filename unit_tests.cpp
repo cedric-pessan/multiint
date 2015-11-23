@@ -155,6 +155,8 @@ TEST(LargeIntegerTest, Multiplication)
    mpz_class i2gmp( s2 );
    ASSERT_EQ( (string)( i2 * 4354657576 ), mpz_class( i2gmp * mpz_class( 4354657576 ) ).get_str() );
    
+   ASSERT_EQ( (string)( i2 * (uint64_t)4354657576 ), mpz_class( i2gmp * mpz_class( (uint64_t)4354657576 ) ).get_str() );
+   
    ASSERT_EQ( (string)( i2 * -4354657576 ), mpz_class( i2gmp * mpz_class( -4354657576 ) ).get_str() );
    
    ASSERT_EQ( (string)( 4354657576 * i2 ), mpz_class( mpz_class( 4354657576 ) * i2gmp ).get_str() );
@@ -191,6 +193,8 @@ TEST(LargeIntegerTest, Division)
    LargeInteger<1024> i2 = s2;
    mpz_class i2gmp( s2 );
    ASSERT_EQ( (string)( i2 / 4354657576 ), mpz_class( i2gmp / mpz_class( 4354657576 ) ).get_str() );
+   
+   ASSERT_EQ( (string)( i2 / (uint64_t)4354657576 ), mpz_class( i2gmp / mpz_class( (uint64_t)4354657576 ) ).get_str() );
    
    ASSERT_EQ( (string)( i2 / -4354657576 ), mpz_class( i2gmp / mpz_class( -4354657576 ) ).get_str() );
    
@@ -231,6 +235,8 @@ TEST(LargeIntegerTest, Modulo)
    LargeInteger<1024> i2 = s2;
    mpz_class i2gmp( s2 );
    ASSERT_EQ( i2 % 4354657576, atoll(mpz_class( i2gmp % mpz_class( 4354657576 ) ).get_str().c_str() ) );
+   
+   ASSERT_EQ( i2 % (uint64_t)4354657576, atoll(mpz_class( i2gmp % mpz_class( (uint64_t)4354657576 ) ).get_str().c_str() ) );
    
    ASSERT_EQ( i2 % -4354657576, atoll(mpz_class( i2gmp % mpz_class( -4354657576 ) ).get_str().c_str() ) );
    
