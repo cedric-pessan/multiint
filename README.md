@@ -34,10 +34,9 @@ typedef LargeInteger<1024> int1024_t;
 Limitations
 -----------
 
-* Currently, the library expects that compiler provide a 128 bits
-integer type to store temporary results. In practice, it means the
-only copatible compilers are gcc and clang on 64 bits targets. This
-will be fixed in future revisions by defining a custom basic 128 bits type.
+* The library uses the compiler provided __int128 type when available.
+It is known to be available in gcc and clang. When this type is not
+available, an local basic implementation is used that may be slower.
 
 * The number of bits of the integer must be a multiple a 64. Using
 another length will issue a compiler error.

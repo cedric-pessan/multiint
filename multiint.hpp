@@ -32,6 +32,7 @@ SOFTWARE.
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <cassert>
 
 #define CPP11VERSION 199711L
 
@@ -47,56 +48,125 @@ class Basic128
  public:
    Basic128( uint64_t i )
      {
-        std::cout << "TODO: Basic128::Basic128(uint64_t)" << std::endl;
+        num[ 0 ] = 0;
+        num[ 1 ] = 0;
+        num[ 2 ] = i >> 32;
+        num[ 3 ] = i & 0xFFFFFFFF;
      }
    
    Basic128 operator+( const Basic128& i ) const
      {
-        std::cout << "TODO: Basic128::operator+( const Basic128& ) const" << std::endl;
-        return *this;
+        Basic128 res( 0 );
+        uint32_t carry = 0;
+        
+        for( int k = 3; k >= 0; --k )
+          {
+             uint64_t tmp = (uint64_t)num[ k ] + (uint64_t)i.num[ k ] + (uint64_t)carry;
+             carry = tmp >> 32;
+             res.num[ k ] = tmp & 0xFFFFFFFF;
+          }
+        
+        return res;
+     }
+   
+   Basic128 operator*( uint32_t i ) const
+     {
+        Basic128 res( 0 );
+        uint32_t carry = 0;
+        
+        for( int k = 3; k >= 0; --k )
+          {
+             uint64_t tmp = i * (uint64_t)num[k] + (uint64_t)carry;
+             carry = tmp >> 32;
+             res.num[ k ] = tmp & 0xFFFFFFFF;
+          }
+        return res;
      }
    
    Basic128 operator*( const Basic128& i ) const
      {
-        std::cout << "TODO: Basic128::operator*( const Basic128& ) const" << std::endl;
-        return *this;
+        Basic128 res( 0 );
+        
+        for( int k = 0; k < 4; ++k )
+          res += ( i * num[ k ] ) << ( 128 - 32 * ( k+1 ) );
+        
+        return res;
      }
    
    int64_t operator/( uint64_t i ) const
      {
-        std::cout << "TODO: Basic128::operator/( int64_t ) const" << std::endl;
-        return 0;
+        Basic128 res( 0 );
+        uint64_t r = 0;
+        
+        for( int k = 0; k < 4; ++k )
+          {
+             r = r << 32 | (uint64_t)num[k];
+             res.num[k] = r / i;
+             r %= i;
+          }
+        
+        return ( (uint64_t)res.num[ 2 ] << 32 ) | res.num[ 3 ];
      }
    
    uint64_t operator&( uint64_t i ) const
      {
-        std::cout << "TODO: Basic128::operato&( uint64_t ) const" << std::endl;
-        return 0;
+        return ( ( ( uint64_t )( num[ 2 ] ) << 32 ) | num[ 3 ] ) & i;
      }
    
    Basic128 operator|( const Basic128& i ) const
      {
-        std::cout << "TODO: Basic128::operator|( const Basic128& ) const" << std::endl;
-        return *this;
+        Basic128 res(0);
+        for( int k = 0; k < 4; ++k )
+          res.num[ k ] = num[ k ] | i.num[ k ];
+        return res;
      }
    
    Basic128 operator<<( int l ) const
      {
-        std::cout << "TODO: Basic128::operator<<( int ) const" << std::endl;
-        return *this;
+        Basic128 res = *this;
+        while( l > 0 )
+          {
+             res.num[ 0 ] = res.num[ 1 ];
+             res.num[ 1 ] = res.num[ 2 ];
+             res.num[ 2 ] = res.num[ 3 ];
+             res.num[ 3 ] = 0;
+             l -= 32;
+          }
+        return res;
      }
    
    uint64_t operator>>( int r ) const
      {
-        std::cout << "TODO: Basic128::operator>>( int ) const" << std::endl;
-        return 0;
+        assert( r == 64 );
+        
+        return ( ( uint64_t )num[ 0 ] << 32 ) | num[ 1 ];
+     }
+   
+   Basic128 operator+=( const Basic128& i )
+     {
+        *this = *this + i;
+        return *this;
      }
    
    Basic128 operator%=( uint64_t i )
      {
-        std::cout << "TODO: Basic128::operator%=( int64_t ) const" << std::endl;
+        uint64_t r = 0;
+        
+        for( int k = 0; k < 4; ++k )
+          {
+             r = r << 32 | num[ k ];
+             r %= i;
+          }
+        
+        num[ 0 ] = 0;
+        num[ 1 ] = 0;
+        num[ 2 ] = r >> 32;
+        num[ 3 ] = r & 0xFFFFFFFF;
         return *this;
      }
+   
+ private:
+   uint32_t num[ 4 ];
 };
 
 typedef Basic128 uint128_t;
@@ -419,7 +489,8 @@ template< int W, typename u128 = uint128_t > class LargeInteger : private Intege
              r %= i;
           }
         
-        res.r = new LargeInteger( (uint64_t)r );
+        uint64_t r64 = r & 0xFFFFFFFFFFFFFFFFULL;
+        res.r = new LargeInteger( r64 );
         if( neg )
           {
              res.negate();
